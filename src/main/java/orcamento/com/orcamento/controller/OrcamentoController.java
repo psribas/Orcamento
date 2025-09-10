@@ -5,12 +5,18 @@ import orcamento.com.orcamento.orcamentoObject.AtualizaOrcamento;
 import orcamento.com.orcamento.orcamentoObject.Orcamento;
 import orcamento.com.orcamento.orcamentoObject.OrcamentoEntity;
 import orcamento.com.orcamento.repository.OrcamentoRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+
 import java.util.List;
 
 @RestController
@@ -27,8 +33,13 @@ public class OrcamentoController {
     }
 
     @GetMapping
-    public List<Orcamento> listaOrcamento() {
-        return repository.findAll().stream().map(Orcamento::new).toList();
+    public ResponseEntity<Page<Orcamento>> listaOrcamento(@PageableDefault
+                                                             (size = 5
+                                                            , page = 1
+                                                            , sort = "nome"
+                                                            , direction = Sort.Direction.ASC) Pageable page) {
+
+        return ResponseEntity.ok(repository.findAll(page).map(Orcamento::new));
 
     }
 
