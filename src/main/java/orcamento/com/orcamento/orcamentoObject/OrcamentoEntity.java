@@ -1,22 +1,30 @@
 package orcamento.com.orcamento.orcamentoObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.*;
+import orcamento.com.orcamento.usuario.Usuario;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity(name = "Orcamento")
 @Table(name = "Tb_orcamento")
-@Getter
-@Setter
+
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLRestriction("ativo=true")
 @EqualsAndHashCode(of = "id")
 
 public class OrcamentoEntity {
 
     public OrcamentoEntity( Orcamento dados) {
+        this.ativo     = true;
         this.nome      = dados.nome();
         this.categoria = dados.categoria();
         this.valor     = dados.valor();
@@ -25,32 +33,72 @@ public class OrcamentoEntity {
         //this.id          = dados.id();
     }
 
-    @PrePersist
-    private void DataCriacao () {
-        this.datacriacao = LocalDate.now();
-        this.dataalteracao = LocalDate.now();
-    }
+//    @PrePersist
+//    private void DataCriacao () {
+//        this.datacriacao = LocalDate.now();
+//        this.dataalteracao = LocalDate.now();
+//    }
 
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "tb_orcamento_s")
     @SequenceGenerator(name = "tb_orcamento_s", sequenceName = "tb_orcamento_s", allocationSize = 1)
-    private Integer id;
+    private Long id;
     private String nome;
 
     @Enumerated(EnumType.STRING)
     private Categoria categoria;
-    private int valor;
+    private BigDecimal valor;
 
     @Enumerated(EnumType.STRING)
     private Status status;
-    private LocalDate datacriacao;
-    private LocalDate dataalteracao;
+    @CreatedDate
+    private LocalDateTime datacriacao;
+    @LastModifiedDate
+    private LocalDateTime dataalteracao;
+    private boolean ativo = true;
 
-    public Integer getId() {
+    @ManyToOne
+    @JoinColumn(name = "usuario_id" , nullable = false, updatable = false)
+    @JsonIgnore
+    private Usuario usuario;
+
+    public LocalDateTime getDatacriacao() {
+        return datacriacao;
+    }
+
+    public void setDatacriacao(LocalDateTime datacriacao) {
+        this.datacriacao = datacriacao;
+    }
+
+    public LocalDateTime getDataalteracao() {
+        return dataalteracao;
+    }
+
+    public void setDataalteracao(LocalDateTime dataalteracao) {
+        this.dataalteracao = dataalteracao;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -70,11 +118,11 @@ public class OrcamentoEntity {
         this.categoria = categoria;
     }
 
-    public int getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 
-    public void setValor(int valor) {
+    public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
 
@@ -87,18 +135,16 @@ public class OrcamentoEntity {
     }
 
     public void AtualizarOrcamento( AtualizaOrcamento dados) {
-        int cont = 0;
+       // int cont = 0;
         if (dados.valor() != null) {
             this.valor = dados.valor();
-            cont++;
+           // cont++;
         }
         if (dados.status() != null) {
             this.status = dados.status();
-            cont++;
+           // cont++;
         }
-        if (cont > 0) {
-            this.dataalteracao = LocalDate.now();
-        }
+      //
     }
 }
 

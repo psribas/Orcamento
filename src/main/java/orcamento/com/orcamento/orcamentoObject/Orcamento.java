@@ -5,13 +5,15 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.lang.Contract;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record Orcamento(@NotBlank
                          String nome,
                         @Enumerated
                          Categoria categoria,
-                        int valor,
+                        BigDecimal valor,
                         @Enumerated
                          Status status
                         ) {

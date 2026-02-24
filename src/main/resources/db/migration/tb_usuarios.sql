@@ -1,0 +1,8 @@
+create table TB_USUARIOS
+( usuario_id NUMBER,
+  login      VARCHAR2(240),
+  senha      VARCHAR2(240)
+);
+
+ALTER TABLE TB_ORCAMENTO
+  ADD COLUMN USUARIO_ID  NUMBER;

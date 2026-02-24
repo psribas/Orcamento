@@ -1,20 +1,31 @@
 package orcamento.com.orcamento.infra.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
+import org.springframework.validation.FieldError;
 
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExceptionHandle {
-   private Instant timestamp;
-   private Integer status;
-   private String  error;
-   private String  message;
-   private String  path;
 
+   private Instant timestamp = Instant.now();
+   private Integer status;
+   private String error;
+   private String message;
+   private String path;
+   private String stackTrace;
+   private List<FieldValidationError> filedErrors;
+
+
+   public record FieldValidationError (String campo, String mensagem){
+
+      public FieldValidationError (FieldError erro ){
+         this(erro.getField(), erro.getDefaultMessage());
+      }
+   }
 }
